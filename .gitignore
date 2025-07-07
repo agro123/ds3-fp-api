@@ -1,0 +1,65 @@
+# === Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.*
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg-info/
+.venv/
+venv/
+env/
+.Python
+
+# === Serverless Framework ===
+.serverless/
+
+# === AWS SAM ===
+.aws-sam/
+
+# === Logs & temporary files ===
+*.log
+tmp/
+temp/
+.cache/
+coverage/
+
+# === IDEs ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+
+# === Docker ===
+*.tar
+docker-compose.override.yml
+
+# === Test output ===
+test-output/
+coverage/
+
+# === GitHub Actions secrets (if any) ===
+.github/secrets/
+
+# === Zip artifacts ===
+*.zip
+
+# === Jupyter (if notebooks used for prototyping Python) ===
+*.ipynb_checkpoints/
+
+# === Terraform / CDK (if used later) ===
+*.tfstate
+*.tfstate.backup
+cdk.out/
+
