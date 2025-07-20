@@ -26,6 +26,7 @@ export const updateReservation = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Error updating reservation' });
   }
+  await pool.end();
 };
 
 

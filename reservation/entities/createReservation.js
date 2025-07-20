@@ -14,6 +14,7 @@ export const createReservation = async (req, res) => {
     console.error(err?.message || err);
     res.status(500).json({ error: 'Error creating reservation' });
   }
+  await pool.end();
 };
 
 

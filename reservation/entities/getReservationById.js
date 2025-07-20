@@ -10,6 +10,7 @@ export const getReservationById = async (req, res) => {
     console.error(err?.message || err);
     res.status(500).json({ error: 'Error fetching reservation' });
   }
+  await pool.end();
 };
 
 export default getReservationById;

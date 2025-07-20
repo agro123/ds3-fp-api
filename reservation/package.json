@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "build": "babel . -d dist --copy-files"
   },
   "keywords": [],
   "author": "",

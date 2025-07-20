@@ -8,6 +8,7 @@ export const getAllReservations = async (req, res) => {
     console.error(err?.message || err);
     res.status(500).json({ error: 'Error fetching reservations' });
   }
+  await pool.end();
 };
 
 export default getAllReservations
