@@ -3,26 +3,26 @@ import bcrypt from 'bcrypt';
 import client from '../config/db.js';
 
 const updateUser = async (req, res) => {
-  const { username } = req.params;
-  const { fullName, rol, password } = req.body;
+  const { email } = req.params;
+  const { name, password, isAdmin } = req.body;
 
   try {
     const updates = [];
     const values = {};
 
-    if (fullName) {
-      updates.push('fullName = :fullName');
-      values[':fullName'] = { S: fullName };
+    if (name) {
+      updates.push('name = :name');
+      values[':name'] = { S: name };
     }
 
-    if (rol) {
-      updates.push('rol = :rol');
-      values[':rol'] = { S: rol };
+    if (typeof isAdmin === 'boolean') {
+      updates.push('isAdmin = :isAdmin');
+      values[':isAdmin'] = { BOOL: isAdmin };
     }
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      updates.push('password = :password');
+      updates.push('password_hash = :password');
       values[':password'] = { S: hashedPassword };
     }
 
@@ -32,7 +32,7 @@ const updateUser = async (req, res) => {
 
     const command = new UpdateItemCommand({
       TableName: 'users',
-      Key: { username: { S: username } },
+      Key: { email: { S: email } },
       UpdateExpression: `SET ${updates.join(', ')}`,
       ExpressionAttributeValues: values
     });

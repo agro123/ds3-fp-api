@@ -2,12 +2,12 @@ import { GetItemCommand } from '@aws-sdk/client-dynamodb';
 import client from '../config/db.js';
 
 const getUser = async (req, res) => {
-  const { username } = req.params;
+  const { email } = req.params;
 
   try {
     const command = new GetItemCommand({
       TableName: 'users',
-      Key: { username: { S: username } }
+      Key: { email: { S: email } }
     });
 
     const { Item } = await client.send(command);
@@ -18,9 +18,10 @@ const getUser = async (req, res) => {
 
     res.json({
       id: Item.id.S,
-      fullName: Item.fullName.S,
-      username: Item.username.S,
-      rol: Item.rol.S
+      name: Item.name.S,
+      email: Item.email.S,
+      created_at: Item.created_at.S,
+      isAdmin: Item.isAdmin.BOOL
     });
 
   } catch (error) {

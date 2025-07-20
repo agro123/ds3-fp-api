@@ -4,26 +4,29 @@ import bcrypt from 'bcrypt';
 import client from '../config/db.js';
 
 const createUser = async (req, res) => {
-  const { fullName, username, rol, password } = req.body;
+const { name, email, password, isAdmin } = req.body;
+console.log('Datos recibidos desde Postman:', req.body);
 
-  if (!fullName || !username || !rol || !password) {
-    return res.status(400).json({ error: "Faltan campos obligatorios." });
+  if (!name || !email || !password || typeof isAdmin !== 'boolean') {
+    return res.status(400).json({ error: "Campos requeridos faltantes." });
   }
 
   try {
     const id = crypto.randomUUID();
     const hashedPassword = await bcrypt.hash(password, 10);
+    const createdAt = new Date().toISOString();
 
     const command = new PutItemCommand({
       TableName: 'users',
       Item: {
         id: { S: id },
-        fullName: { S: fullName },
-        username: { S: username },
-        rol: { S: rol },
-        password: { S: hashedPassword }
+        name: { S: name },
+        email: { S: email },
+        password_hash: { S: hashedPassword },
+        created_at: { S: createdAt },
+        isAdmin: { BOOL: isAdmin }
       },
-      ConditionExpression: 'attribute_not_exists(username)'
+      ConditionExpression: 'attribute_not_exists(email)' 
     });
 
     await client.send(command);
@@ -32,7 +35,7 @@ const createUser = async (req, res) => {
 
   } catch (error) {
     if (error.name === 'ConditionalCheckFailedException') {
-      return res.status(409).json({ error: 'El usuario ya existe' });
+      return res.status(409).json({ error: 'El email ya está registrado' });
     }
 
     res.status(500).json({ error: 'Error interno del servidor' });
