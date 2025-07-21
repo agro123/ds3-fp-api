@@ -19,7 +19,7 @@ CORS(app)
 dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
 table = dynamodb.Table('users')  
 
-JWT_SECRET = os.getenv('JWT_SECRET', 'dev-key')  # ⚠️ En prod, guarda esto seguro
+JWT_SECRET = os.getenv('JWT_SECRET', 'dev-key')
 JWT_EXPIRATION_MINUTES = int(os.getenv('JWT_EXPIRATION_MINUTES', 60))
 
 @app.route('/login', methods=['POST'])
