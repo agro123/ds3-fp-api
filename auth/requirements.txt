@@ -5,5 +5,4 @@ boto3
 aws-wsgi
 flask_cors
 PyJWT
-passlib[bcrypt]
 bcrypt
