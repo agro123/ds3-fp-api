@@ -2,7 +2,8 @@ Flask
 python-dotenv
 flask 
 boto3 
-bcrypt
-awsgi
+aws-wsgi
 flask_cors
 PyJWT
+passlib[bcrypt]
+bcrypt

@@ -12,6 +12,7 @@ import awsgi
 import os
 import datetime
 
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +22,8 @@ table = dynamodb.Table('users')
 
 JWT_SECRET = os.getenv('JWT_SECRET', 'dev-key')
 JWT_EXPIRATION_MINUTES = int(os.getenv('JWT_EXPIRATION_MINUTES', 60))
+
+ENV = os.getenv('ENV', 'dev')
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -36,27 +39,27 @@ def login():
             IndexName='email-index',
             KeyConditionExpression=Key('email').eq(email)
         )
-
     except Exception as e:
         return jsonify({'error': 'Error al acceder a la base de datos', 'details': str(e)}), 500
-    
 
     print("Response from DynamoDB:", response)
-    
+
     if len(response.get('Items')) == 0:
         return jsonify({'error': 'Usuario no encontrado'}), 404
-    
-    user = response.get('Items')[0]
+
+    user = response['Items'][0]
 
     if not bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
         return jsonify({'error': 'Contraseña incorrecta'}), 401
-    
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    exp = now + datetime.timedelta(minutes=JWT_EXPIRATION_MINUTES)
 
     payload = {
         'sub': user['id_user'],
         'email': user['email'],
-        'iat': datetime.datetime.now(datetime.timezone.utc),
-        'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=JWT_EXPIRATION_MINUTES)
+        'iat': now,
+        'exp': exp
     }
 
     token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
@@ -66,7 +69,7 @@ def login():
         UpdateExpression="SET session_token = :val1, session_expires_at = :val2",
         ExpressionAttributeValues={
             ':val1': token,
-            ':val2': payload['exp'].isoformat() + 'Z'
+            ':val2': exp.isoformat() + 'Z'
         },
         ReturnValues="UPDATED_NEW"
     )
@@ -75,8 +78,8 @@ def login():
 
     return jsonify({
         'token': token,
-        'date': datetime.datetime.now().isoformat() + 'Z',
-        'expires_at': payload['exp'].isoformat() + 'Z',
+        'date': now.isoformat() + 'Z',
+        'expires_at': exp.isoformat() + 'Z',
         'userId': user['id_user'],
         'email': user['email'],
     }), 200
@@ -85,9 +88,12 @@ def login():
 def index():
     return "API AUTH working!!"
 
-if __name__ == '__main__':
+if __name__ == '__main__' and ENV == 'dev':
     app.run(debug=True, host='0.0.0.0', port=32003)
 
 
 def lambda_handler(event, context):
+    event['httpMethod'] = event['requestContext']['http']['method']
+    event['path'] = event['requestContext']['http']['path']
+    event['queryStringParameters'] = event.get('queryStringParameters', {})
     return awsgi.response(app, event, context)
