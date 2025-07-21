@@ -30,7 +30,7 @@ def register(bp):
                     'createdAt': item.get('created_at', '')
                 })
 
-            return jsonify({'rooms': formatted_rooms}), 200
+            return jsonify(formatted_rooms), 200
 
         except Exception as e:
             return jsonify({'error': str(e)}), 500
