@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import userRoutes from '../routes/user.routes.js';
+import serverless from "serverless-http";
 
 dotenv.config();
 
@@ -23,4 +24,4 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-export default app;
+export const handler = serverless(app);
