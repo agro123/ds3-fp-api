@@ -262,18 +262,18 @@ export const mockRooms: Room[] = [
     createdAt: "Febrero, 2024"
   },
 
-  // Salas de Cómputo (4)
+  // Salons de Cómputo (4)
   {
     id: "15",
     roomName: "Lab. Computo A-205",
-    roomType: "Sala de cómputo",
+    roomType: "Salon de cómputo",
     capacity: 30,
     equipment: ["30 computadores", "Proyector", "Pizarra digital", "WiFi de alta velocidad", "Software especializado"],
     reservations: [
       {
         id: "res11",
         roomName: "Lab. Computo A-205",
-        roomType: "Sala de cómputo",
+        roomType: "Salon de cómputo",
         date: "Domingo, 31 de Julio",
         startTime: "16:00",
         endTime: "18:00",
@@ -287,8 +287,8 @@ export const mockRooms: Room[] = [
   },
   {
     id: "16",
-    roomName: "Sala de Sistemas B-301",
-    roomType: "Sala de cómputo",
+    roomName: "Salon de Sistemas B-301",
+    roomType: "Salon de cómputo",
     capacity: 25,
     equipment: ["25 computadores", "Servidores", "Switch de red", "UPS", "Sistema de respaldo"],
     reservations: [],
@@ -297,14 +297,14 @@ export const mockRooms: Room[] = [
   {
     id: "17",
     roomName: "Centro de Computo",
-    roomType: "Sala de cómputo",
+    roomType: "Salon de cómputo",
     capacity: 40,
     equipment: ["40 computadores", "Impresoras 3D", "Escáner", "Plotter", "Software de diseño"],
     reservations: [
       {
         id: "res12",
         roomName: "Centro de Computo",
-        roomType: "Sala de cómputo",
+        roomType: "Salon de cómputo",
         date: "Lunes, 1 de Agosto",
         startTime: "13:00",
         endTime: "18:00",
@@ -319,14 +319,14 @@ export const mockRooms: Room[] = [
   {
     id: "18",
     roomName: "Lab. Informatica H-102",
-    roomType: "Sala de cómputo",
+    roomType: "Salon de cómputo",
     capacity: 35,
     equipment: ["35 computadores", "Proyector 4K", "Tableta gráfica", "Cámaras web", "Micrófono"],
     reservations: [
       {
         id: "res13",
         roomName: "Lab. Informatica H-102",
-        roomType: "Sala de cómputo",
+        roomType: "Salon de cómputo",
         date: "Martes, 2 de Agosto",
         startTime: "10:30",
         endTime: "12:00",
