@@ -1,62 +1,66 @@
 import request from 'supertest';
 import app from '../users/index.js';
 
-describe('Microservicio de usuarios', () => {
+describe('Microservice-Users', () => {
+  let userId = null;
+  const emailTest = 'test@example.com';
 
-  test('Registro de usuario', async () => {
+  it('Crear un nuevo usuario', async () => {
     const res = await request(app)
-      .post('/register')
-      .send({ email: 'test@prueba.com', password: '123456' });
+      .post('/users')
+      .send({
+        name: 'Usuario Test',
+        email: emailTest,
+        password: 'password123',
+        isAdmin: false
+      });
 
     expect(res.statusCode).toBe(201);
-    expect(res.body.message).toBe('Usuario registrado');
+    expect(res.body.id).toBeDefined();
+    userId = res.body.id;
   });
 
-  test('Inicio de sesión exitoso', async () => {
-    await request(app)
-      .post('/register')
-      .send({ email: 'login@prueba.com', password: 'abc123' });
-
+  it('Obtener el usuario registrado', async () => {
     const res = await request(app)
-      .post('/login')
-      .send({ email: 'login@prueba.com', password: 'abc123' });
+      .get(`/users/${userId}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.token).toBeDefined();
+    expect(res.body.id).toBe(userId);
+    expect(res.body.email).toBe(emailTest);
   });
 
-  test('Fallo en inicio de sesión con contraseña incorrecta', async () => {
+  it('Actualizar el nombre y contraseña del usuario', async () => {
     const res = await request(app)
-      .post('/login')
-      .send({ email: 'login@prueba.com', password: 'incorrecta' });
-
-    expect(res.statusCode).toBe(401);
-  });
-
-  test('Actualizar contraseña de un usuario', async () => {
-    await request(app)
-      .post('/register')
-      .send({ email: 'update@prueba.com', password: 'pass1' });
-
-    const res = await request(app)
-      .put('/update')
-      .send({ email: 'update@prueba.com', newPassword: 'nuevaPass123' });
+      .put(`/users/${userId}`)
+      .send({
+        name: 'Usuario Actualizado',
+        password: 'nuevoPassword'
+      });
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe('Contraseña actualizada');
+    expect(res.body.message).toBe('Usuario actualizado correctamente');
   });
 
-  test('Eliminar un usuario', async () => {
-    await request(app)
-      .post('/register')
-      .send({ email: 'delete@prueba.com', password: 'abc123' });
-
+  it('Obtener el usuario actualizado', async () => {
     const res = await request(app)
-      .delete('/delete')
-      .send({ email: 'delete@prueba.com' });
+      .get(`/users/${userId}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe('Usuario eliminado');
+    expect(res.body.name).toBe('Usuario Actualizado');
   });
 
+  it('Eliminar el usuario', async () => {
+    const res = await request(app)
+      .delete(`/users/${userId}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toBe('Usuario eliminado correctamente');
+  });
+
+  it('No encuentra el usuario eliminado', async () => {
+    const res = await request(app)
+      .get(`/users/${userId}`);
+
+    expect(res.statusCode).toBe(404);
+  });
 });

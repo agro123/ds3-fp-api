@@ -1,19 +1,24 @@
 {
-  "name": "user-service",
+  "name": "user-service-dynamodb",
   "version": "1.0.0",
-  "description": "Microservicio de usuarios",
+  "description": "Microservicio CRUD de usuarios usando DynamoDB, Express y pruebas con Jest",
   "type": "module",
   "scripts": {
     "start": "node index.js",
     "test": "jest"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "@aws-sdk/client-dynamodb": "^3.570.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.0",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2"
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "supertest": "^6.3.3"
   }
 }
+
