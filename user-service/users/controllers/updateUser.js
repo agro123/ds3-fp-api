@@ -1,5 +1,5 @@
 import { UpdateItemCommand } from '@aws-sdk/client-dynamodb';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import client from '../config/db.js';
 
 const updateUser = async (req, res) => {

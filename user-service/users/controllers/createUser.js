@@ -1,6 +1,6 @@
 import { PutItemCommand } from '@aws-sdk/client-dynamodb';
 import crypto from 'crypto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import client from '../config/db.js';
 
 const createUser = async (req, res) => {

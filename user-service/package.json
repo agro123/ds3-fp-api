@@ -4,14 +4,17 @@
   "description": "Microservicio CRUD de usuarios usando DynamoDB, Express y pruebas con Jest",
   "type": "module",
   "scripts": {
-    "start": "node users/index.js",
+    "start": "node index.js",
     "test": "jest"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.570.0",
-    "bcrypt": "^5.1.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "express": "^4.19.2"
+    "dotenv": "^17.2.0",
+    "express": "^4.19.2",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
