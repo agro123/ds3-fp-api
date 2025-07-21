@@ -1,3 +1,8 @@
 Flask
-psycopg2-binary
 python-dotenv
+flask 
+boto3 
+aws-wsgi
+flask_cors
+PyJWT
+bcrypt
