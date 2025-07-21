@@ -3,7 +3,7 @@ import type { Reservation } from "../types/reservation.types";
 export const mockReservations: Reservation[] = [
   {
     id: "1",
-    roomName: "Sala A-101",
+    roomName: "Salon A-101",
     roomType: "Salon",
     date: "Viernes, 15 de Julio",
     startTime: "14:00",
@@ -40,7 +40,7 @@ export const mockReservations: Reservation[] = [
   {
     id: "4",
     roomName: "Lab Cómputo D-301",
-    roomType: "Sala de cómputo",
+    roomType: "Salon de cómputo",
     date: "Lunes, 18 de Julio",
     startTime: "16:00",
     endTime: "18:00",
@@ -63,7 +63,7 @@ export const mockReservations: Reservation[] = [
   },
   {
     id: "6",
-    roomName: "Sala B-202",
+    roomName: "Salon B-202",
     roomType: "Salon",
     date: "Miércoles, 20 de Julio",
     startTime: "13:00",
@@ -87,8 +87,8 @@ export const mockReservations: Reservation[] = [
   },
   {
     id: "8",
-    roomName: "Sala Cómputo F-301",
-    roomType: "Sala de cómputo",
+    roomName: "Salon Cómputo F-301",
+    roomType: "Salon de cómputo",
     date: "Viernes, 22 de Julio",
     startTime: "11:00",
     endTime: "13:00",
@@ -111,7 +111,7 @@ export const mockReservations: Reservation[] = [
   },
   {
     id: "10",
-    roomName: "Sala C-305",
+    roomName: "Salon C-305",
     roomType: "Salon",
     date: "Domingo, 24 de Julio",
     startTime: "09:00",
@@ -135,8 +135,8 @@ export const mockReservations: Reservation[] = [
   },
   {
     id: "12",
-    roomName: "Sala Cómputo I-401",
-    roomType: "Sala de cómputo",
+    roomName: "Salon Cómputo I-401",
+    roomType: "Salon de cómputo",
     date: "Martes, 26 de Julio",
     startTime: "20:00",
     endTime: "22:00",
