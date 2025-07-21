@@ -77,7 +77,7 @@ def login():
         'token': token,
         'date': datetime.datetime.now().isoformat() + 'Z',
         'expires_at': payload['exp'].isoformat() + 'Z',
-        'id_user': user['id_user'],
+        'userId': user['id_user'],
         'email': user['email'],
     }), 200
 
