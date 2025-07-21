@@ -1,11 +1,9 @@
-import { UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import bcrypt from 'bcryptjs';
 import {
   UpdateItemCommand,
   QueryCommand,
   GetItemCommand
 } from '@aws-sdk/client-dynamodb';
-import bcrypt from 'bcrypt';
 import client from '../config/db.js';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

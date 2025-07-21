@@ -21,13 +21,10 @@ app.get("/", (req, res) => {
     res.send("It's working users api!");
 });
 
-const PORT = process.env.PORT || 32004;
-
 if (process.env.NODE_ENV !== 'prod') {
   app.listen(PORT, () => {
     console.log(`Servidor ejecutándose en el puerto ${PORT}`);
   });
 }
 
-export const handler = serverless(app);
 export const handler = serverless(app);
