@@ -24,8 +24,6 @@ def register(bp):
             if 'type' in data and data['type'] not in ALLOWED_TYPES:
                 return jsonify({'error': f"Tipo de sala inválido. Tipos permitidos: {', '.join(ALLOWED_TYPES)}"}), 400
 
-            
-
             update_expression_parts = []
             expression_attribute_values = {}
 

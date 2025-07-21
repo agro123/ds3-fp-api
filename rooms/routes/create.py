@@ -34,6 +34,7 @@ def register(bp):
                 'roomCapacity': data.get('capacity', 0),
                 'roomType': data['type'],
                 'equipment': data.get('equipment', []),
+                'reservations': [],
                 'created_at': now.isoformat() + 'Z',
             }
 
