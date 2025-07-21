@@ -11,7 +11,11 @@ app.use(cors());
 app.use(express.json());
 app.use('/users', userRoutes);
 
-const PORT = process.env.PORT || 3000;
+app.get("/", (req, res) => {
+    res.send("It's working users api!");
+});
+
+const PORT = process.env.PORT || 32004;
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {

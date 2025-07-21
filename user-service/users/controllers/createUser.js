@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt';
 import client from '../config/db.js';
 
 const createUser = async (req, res) => {
-const { name, email, password, isAdmin } = req.body;
-console.log('Datos recibidos desde Postman:', req.body);
+  const { name, email, password, isAdmin = false } = req.body;
+  console.log('Datos recibidos desde Postman:', req.body);
 
   if (!name || !email || !password || typeof isAdmin !== 'boolean') {
     return res.status(400).json({ error: "Campos requeridos faltantes." });
@@ -19,7 +19,7 @@ console.log('Datos recibidos desde Postman:', req.body);
     const command = new PutItemCommand({
       TableName: 'users',
       Item: {
-        id: { S: id },
+        id_user: { S: id },
         name: { S: name },
         email: { S: email },
         password_hash: { S: hashedPassword },
@@ -38,7 +38,7 @@ console.log('Datos recibidos desde Postman:', req.body);
       return res.status(409).json({ error: 'El email ya está registrado' });
     }
 
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor' + error?.message  });
   }
 };
 
