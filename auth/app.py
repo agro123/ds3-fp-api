@@ -53,7 +53,7 @@ def login():
     
 
     payload = {
-        'sub': user['id_user'],              # O email, si prefieres
+        'sub': user['id_user'],
         'email': user['email'],
         'iat': datetime.datetime.now(datetime.timezone.utc),
         'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=JWT_EXPIRATION_MINUTES)
