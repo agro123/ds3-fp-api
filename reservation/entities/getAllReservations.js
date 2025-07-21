@@ -2,7 +2,7 @@ import pool from "../utils/db.js";
 
 export const getAllReservations = async (req, res) => {
   try {
-    const { room_id, user_id, date_reserve, hour_reserve, status } = req.query;
+    const { room_id, user_id, startTime, date, status } = req.query;
 
     const conditions = [];
     const values = [];
@@ -17,14 +17,14 @@ export const getAllReservations = async (req, res) => {
       conditions.push(`user_id = $${values.length}`);
     }
 
-    if (date_reserve) {
-      values.push(date_reserve);
+    if (date) {
+      values.push(date);
       conditions.push(`date_reserve = $${values.length}`);
     }
 
-    if (hour_reserve) {
-      values.push(hour_reserve);
-      conditions.push(`hour_reserve = $${values.length}`);
+    if (startTime) {
+      values.push(startTime);
+      conditions.push(`start_time = $${values.length}`);
     }
 
     const allowedStates = ['confirmed', 'pending', 'cancelled'];
@@ -39,11 +39,21 @@ export const getAllReservations = async (req, res) => {
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    const query = `SELECT * FROM reservations ${whereClause} ORDER BY date_reserve, hour_reserve`;
+    const query = `SELECT * FROM reservations ${whereClause} ORDER BY date_reserve, start_time`;
 
     const result = await pool.query(query, values);
 
-    res.status(200).json(result.rows);
+    const response = result.rows.map(row => ({
+      id: row.id_reserve,
+      userId: row.user_id,
+      roomId: row.room_id,
+      date: row.date_reserve,
+      startTime: row.start_time,
+      endTime: row.end_time,
+      status: row.status
+    }));
+
+    res.status(200).json(response);
   } catch (err) {
     console.error(err?.message || err);
     res.status(500).json({ error: 'Error fetching reservations' });

@@ -10,6 +10,6 @@ export const deleteReservation = async (req, res) => {
     console.error(err?.message || err);
     res.status(500).json({ error: 'Error deleting reservation' });
   }
-  await pool.end();
+  //await pool.end();
 };
 export default deleteReservation;
