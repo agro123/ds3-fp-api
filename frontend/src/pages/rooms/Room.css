@@ -6,7 +6,7 @@
   width: 100vw;
 }
 
-.room-main{
+.room-main {
   flex: 1;
   padding: 24px;
   display: flex;
@@ -17,61 +17,92 @@
   max-height: 100vh;
 }
 
-.room-body{
-    display: flex;
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.room-picture img {
+.room-header h1 {
+  margin: 0;
+  color: #374151;
+  font-size: 1.8rem;
+}
+
+.room-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  gap: 16px;
+}
+
+.room-picture {
+  width: 40%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.room-details {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  box-shadow: none;
+  height: fit-content;
+  gap: 20px;
+}
+
+.room-details h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.room-information {
+  display: flex;
   width: 100%;
-  max-width: 500px;
-  height: auto;
-  border-radius: 10px;
-  object-fit: cover;
+  font-size: 1.2rem;
+  text-align: justify;
 }
 
-.room-card{
-    display: block;
-    width: 50%;
-    margin: 0 auto;
-    text-align: center;
-    padding: 20px;
-    box-shadow: none;
-    height: fit-content;
+.room-information dt {
+  font-size: 1rem;
 }
 
-.room-information{
-    display: flex;
-    width: 100%;
-    font-size: 1.2rem;
-    padding: 20px;
-    text-align: justify;
+.room-information dd {
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
-.room-information dt{
-    font-weight: bold;
+.room-information dd:first-of-type {
+  margin-bottom: 10px;
 }
 
-.room-information dd{
-    font-size: 1rem;
+.room-information section {
+  margin: 0 auto;
 }
 
-.room-information dd:first-of-type{
-    margin-bottom: 10px;
+.room-information ul {
+  margin-left: 22px;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
-.room-information section{
-    margin: 0 auto;
+.room_title_span {
+  font-size: 1rem;
 }
 
-.room-information ul{
-    margin-left: 22px;
-    font-size: 1rem;
-}
-
-.room_title_span{
-    font-weight: bold;
-}
-
-.room-card button{
-    width: 90%;
+.room-card button {
+  width: 90%;
 }

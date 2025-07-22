@@ -1,29 +1,9 @@
-.cancel-reservation-btn {
-  background: #c24e3a;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.cancel-reservation-btn:hover {
-  transform: translateY(-2px);
-}
-
 .reservation-info-container {
   min-height: 100vh;
   background-color: #f8fafc;
   display: flex;
   height: 100vh;
   width: 100vw;
-}
-
-.reservation-info-main-title{
-    font-size: 2rem;
-    font-weight: bold;
 }
 
 .reservation-info-main {
@@ -37,90 +17,172 @@
   max-height: 100vh;
 }
 
-.reservation-info-body {
+.reservation-info-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.reservation-info-picture img {
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-  border-radius: 10px;
-  object-fit: cover;
+.reservation-info-main-title {
+  font-size: 1.8rem;
+  font-weight: bold;
 }
 
-.reservation-info-card {
-  display: block;
-  width: 50%;
+.reservation-info-main-title span {
+  font-size: 1.25rem;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.reservation-info-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  gap: 16px;
+}
+
+.reservation-info-picture {
+  width: 40%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.reservation-info-details {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
   margin: 0 auto;
   text-align: center;
-  padding: 20px;
   box-shadow: none;
-  height: fit-content;
+  height: 100%;
+  gap: 16px;
 }
 
-.reservation-info-general {
+.reservation-info-room {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  border: 1px solid rgba(128, 128, 128, 0.2);
-  border-radius: 5px;
-  margin-bottom: 20px;
-  padding: 20px;
+  font-size: 1.2rem;
+  justify-content: center;
+  gap: 12px;
+  height: 50%;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.reservation-info-information {
+.reservation-info-room-information {
   display: flex;
   width: 100%;
   font-size: 1.2rem;
-  padding: 20px;
   text-align: justify;
 }
 
-.reservation-info-information dt, .reservation-info-read dt {
-  font-weight: bold;
-}
-
-.reservation-info-information dd, .reservation-info-read dd {
+.reservation-info-room-information dt,
+.reservation-info-read dt {
   font-size: 1rem;
 }
 
-.reservation-info-information dd:first-of-type {
+.reservation-info-room-information dd,
+.reservation-info-read dd {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.reservation-info-room-information dd:first-of-type {
   margin-bottom: 10px;
 }
 
-.reservation-info-information section {
+.reservation-info-room-information section {
   margin: 0 auto;
 }
 
-.reservation-info-information ul {
+.reservation-info-room-information ul {
   margin-left: 22px;
-  font-size: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
 .reservation-info-title-span {
-  font-weight: bold;
+  font-size: 1rem;
 }
 
 .reservation-info-card button {
   width: 90%;
 }
 
-.reservation-info-read{
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    border-radius: 5px;
-    padding: 20px;
+.reservation-info-read {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 1.2rem;
+  justify-content: space-between;
+  height: 50%;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.reservation-info-read section{
-    display: flex;
-    text-align: justify;
-    margin-top: 20px;
-    margin-bottom: 20px;
+.reservation-info-read section {
+  display: flex;
+  text-align: justify;
 }
 
-.reservation-info-read section dl{
-    margin: 0 auto;
+.reservation-info-read section dl {
+  margin: 0 auto;
 }
 
-.reservation-info-read section dl dd:first-of-type{
-    margin-bottom: 10px;
+.reservation-info-read section dl dd:first-of-type {
+  margin-bottom: 10px;
+}
+
+.reservation-info-options {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+}
+
+.reservation-info-options .new-reservation-btn {
+  background: #087eee;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 50%;
+  font-size: 1rem;
+}
+
+.reservation-info-options .cancel-reservation-btn {
+  background: #c24e3a;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 50%;
+  font-size: 1rem;
+}
+
+.reservation-info-options .cancel-reservation-btn:hover {
+  transform: translateY(-2px);
+}
+
+.reservation-info-details h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
 }

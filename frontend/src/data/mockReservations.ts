@@ -40,7 +40,7 @@ export const mockReservations: Reservation[] = [
   {
     id: "4",
     roomName: "Lab Cómputo D-301",
-    roomType: "Salon de cómputo",
+    roomType: "Sala de cómputo",
     date: "Lunes, 18 de Julio",
     startTime: "16:00",
     endTime: "18:00",
@@ -63,7 +63,7 @@ export const mockReservations: Reservation[] = [
   },
   {
     id: "6",
-    roomName: "Salon B-202",
+    roomName: "Salon B-203",
     roomType: "Salon",
     date: "Miércoles, 20 de Julio",
     startTime: "13:00",
@@ -87,8 +87,8 @@ export const mockReservations: Reservation[] = [
   },
   {
     id: "8",
-    roomName: "Salon Cómputo F-301",
-    roomType: "Salon de cómputo",
+    roomName: "Sala Cómputo F-301",
+    roomType: "Sala de cómputo",
     date: "Viernes, 22 de Julio",
     startTime: "11:00",
     endTime: "13:00",
@@ -136,7 +136,7 @@ export const mockReservations: Reservation[] = [
   {
     id: "12",
     roomName: "Salon Cómputo I-401",
-    roomType: "Salon de cómputo",
+    roomType: "Sala de cómputo",
     date: "Martes, 26 de Julio",
     startTime: "20:00",
     endTime: "22:00",

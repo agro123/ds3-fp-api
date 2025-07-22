@@ -1,7 +1,7 @@
 export interface Reservation {
   id: string;
   roomName: string;
-  roomType: "Auditorios" | "Laboratorio" | "Salon de cómputo" | "Salon";
+  roomType: "Auditorios" | "Laboratorio" | "Sala de cómputo" | "Salon";
   date: string;
   startTime: string;
   endTime: string;
@@ -14,7 +14,7 @@ export interface Reservation {
 export interface Room {
   id: string;
   roomName: string;
-  roomType: "Auditorios" | "Laboratorio" | "Salon de cómputo" | "Salon";
+  roomType: "Auditorios" | "Laboratorio" | "Sala de cómputo" | "Salon";
   capacity: number;
   equipment: string[];
   reservations: Reservation[];
