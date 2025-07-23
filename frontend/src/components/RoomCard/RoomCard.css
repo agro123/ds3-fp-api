@@ -1,0 +1,84 @@
+.room-card {
+  /* La imagen de fondo se establece dinámicamente desde el componente */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  width: 100%;
+  min-width: 420px;
+  overflow: hidden;
+  display: flex;
+  align-items: end;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.rooms-grid .room-card {
+  width: 100%;
+  min-width: 50px;
+}
+
+.room-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.8) 50%,
+    rgba(0, 0, 0, 0.6) 80%,
+    transparent 100%
+  );
+  padding: 20px 8px 8px;
+}
+
+.room-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: fit-content;
+  width: 100%;
+}
+
+.room-card-content h3 {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.room-card-details {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.room-card-details p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .room-card {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .room-card-content h3 {
+    font-size: 1rem;
+  }
+  
+  .room-details p {
+    font-size: 0.8rem;
+  }
+}
