@@ -25,8 +25,23 @@ export const fetchReservations = async (): Promise<Reservation[]> => {
 
 export const fetchReservationById = async (id: string): Promise<Reservation | null> => {
   try {
+    console.log('Fetching reservation with ID:', id, 'Type:', typeof id);
     const reservations = await fetchReservations();
-    return reservations.find((reservation: Reservation) => reservation.id === id) || null;
+    console.log('All reservations:', reservations.map(r => ({ id: r.id, type: typeof r.id, roomName: r.roomName })));
+    
+    const foundReservation = reservations.find((reservation: Reservation) => {
+      // Convertir ambos a string para asegurar la comparación
+      const reservationId = String(reservation.id);
+      const searchId = String(id);
+      
+      console.log('Comparing:', reservationId, 'with', searchId, '- Match:', reservationId === searchId);
+      console.log('Types:', typeof reservation.id, 'vs', typeof id);
+      
+      return reservationId === searchId;
+    });
+    
+    console.log('Found reservation:', foundReservation);
+    return foundReservation || null;
   } catch (error) {
     console.error('Error fetching reservation by ID:', error);
     throw error;

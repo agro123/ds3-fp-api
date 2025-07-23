@@ -110,7 +110,12 @@ const Room: React.FC = () => {
               </div>
               <button 
                 className="new-reservation-btn"
-                onClick={() => navigate('/make-reservation')}
+                onClick={() => navigate('/make-reservation', { 
+                  state: { 
+                    selectedRoomId: myRoom?.id,
+                    selectedRoomName: myRoom?.roomName 
+                  } 
+                })}
               >
                 Realizar reserva
               </button>

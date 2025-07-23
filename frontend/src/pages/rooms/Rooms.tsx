@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Rooms.css";
 import { RoomCard, Sidebar } from "../../components";
 import type { Room, RoomTypeFilter, CapacityFilter, RoomSortBy } from "../../types";
@@ -7,6 +7,7 @@ import { fetchRooms } from "../../services/roomService";
 
 const Rooms: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomTypeFilter, setRoomTypeFilter] = useState<RoomTypeFilter>("all");
   const [capacityFilter, setCapacityFilter] = useState<CapacityFilter>("all");
@@ -15,6 +16,17 @@ const Rooms: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  // Aplicar filtro automático si viene desde navegación con state
+  useEffect(() => {
+    if (location.state?.filterType) {
+      const filterType = location.state.filterType as RoomTypeFilter;
+      console.log('Applying automatic filter:', filterType);
+      setRoomTypeFilter(filterType);
+      // Limpiar el state para evitar que se aplique en futuras visitas
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const loadRooms = async () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./NewReservation.css";
 import { Sidebar } from "../../components";
 import { getRoomImage } from "../../utils";
@@ -10,11 +10,13 @@ import { useAuth } from "../../context/useAuth";
 
 const NewReservation: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasProcessedPreSelection, setHasProcessedPreSelection] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -27,6 +29,7 @@ const NewReservation: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  // Load rooms
   useEffect(() => {
     const loadRooms = async () => {
       try {
@@ -35,9 +38,6 @@ const NewReservation: React.FC = () => {
         
         const roomsData = await fetchRooms();
         setRooms(roomsData);
-        if (roomsData.length > 0) {
-          setSelectedRoom(roomsData[0]);
-        }
       } catch (error) {
         console.error('Error fetching rooms:', error);
         setError(error instanceof Error ? error.message : 'Error al cargar las salas');
@@ -48,6 +48,31 @@ const NewReservation: React.FC = () => {
 
     loadRooms();
   }, []);
+
+  // Handle room selection after rooms are loaded
+  useEffect(() => {
+    if (rooms.length > 0 && !hasProcessedPreSelection) {
+      const preSelectedRoomId = location.state?.selectedRoomId;
+      console.log('Pre-selected room ID from navigation:', preSelectedRoomId);
+      console.log('Available rooms:', rooms.map(r => ({ id: r.id, name: r.roomName })));
+      
+      if (preSelectedRoomId) {
+        // Find and select the pre-selected room
+        const preSelectedRoom = rooms.find((room: Room) => room.id === preSelectedRoomId);
+        if (preSelectedRoom) {
+          console.log('Found and selecting pre-selected room:', preSelectedRoom.roomName);
+          setSelectedRoom(preSelectedRoom);
+        } else {
+          console.log('Pre-selected room not found, using first room');
+          setSelectedRoom(rooms[0]);
+        }
+      } else {
+        console.log('No pre-selected room, using first room');
+        setSelectedRoom(rooms[0]);
+      }
+      setHasProcessedPreSelection(true);
+    }
+  }, [rooms, hasProcessedPreSelection, location.state?.selectedRoomId]);
 
   const handleRoomChange = (roomId: string) => {
     const room = rooms.find((r) => r.id === roomId);
@@ -90,7 +115,7 @@ const NewReservation: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.userId) {
+    if (!user?.id) {
       setSubmitError("Error: Usuario no autenticado");
       return;
     }
@@ -110,7 +135,7 @@ const NewReservation: React.FC = () => {
       setSubmitError(null);
 
       const reservationData: CreateReservationData = {
-        user_id: user.userId,
+        user_id: user.id,
         room_id: selectedRoom.id,
         roomName: selectedRoom.roomName,
         date: formData.date,
