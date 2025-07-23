@@ -13,7 +13,8 @@ export const getReservationById = async (req, res) => {
       date: row.date_reserve,
       startTime: row.start_time,
       endTime: row.end_time,
-      status: row.status
+      status: row.status,
+      roomName: row.room_name
     }));
     res.status(200).json(response[0]);
   } catch (err) {

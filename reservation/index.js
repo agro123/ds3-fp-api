@@ -3,7 +3,7 @@ import cors from "cors";
 import serverless from "serverless-http";
 import router from "./entities/index.js";
 
-const PORT = 35002;
+const PORT = 35001;
 
 const app = express();
 

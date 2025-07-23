@@ -16,7 +16,7 @@ app.use(cors());
 const API_URL = process.env.API_URL;
 
 app.post("/make-reservation", async (req, res) => {
-  const { user_id, room_id, date, startTime, endTime } = req.body;
+  const { user_id, room_id, date, startTime, endTime, roomName } = req.body;
 
   if (!API_URL) {
     throw new Error("La variable de entorno API_URL no está definida");
@@ -46,6 +46,7 @@ app.post("/make-reservation", async (req, res) => {
         date,
         startTime,
         endTime,
+        roomName,
         status: "pending"
     });
     reservationId = reservation.data.id_reserve;
