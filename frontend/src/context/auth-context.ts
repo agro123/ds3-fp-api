@@ -2,11 +2,18 @@ import { createContext } from 'react';
 
 // Tipos para el contexto de autenticación
 export interface User {
-  userId: string;
+  id: string;
+  name: string;
   email: string;
-  nombre: string;
-  apellido: string;
-  plan: 'estudiante' | 'profesor' | 'staff';
+  created_at: string;
+  isAdmin: boolean;
+  session_token: string;
+  session_expires_at: string;
+  // Propiedades opcionales para compatibilidad
+  userId?: string;
+  nombre?: string;
+  apellido?: string;
+  plan?: 'estudiante' | 'profesor' | 'staff';
 }
 
 export interface LoginResponse {
