@@ -1,26 +1,48 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Reservations.css";
 import { ReservationCard, Sidebar } from "../../components";
 import type { Reservation, RoomTypeFilter, StatusFilter, SortBy } from "../../types";
-import { mockReservations } from "../../data";
+import { fetchReservations } from "../../services";
+import { useAuth } from "../../context/useAuth";
 
 const Reservations: React.FC = () => {
+  const navigate = useNavigate();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [roomTypeFilter, setRoomTypeFilter] = useState<RoomTypeFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+  const { user } = useAuth();
 
   useEffect(() => {
-    // TODO: Cargar reservas desde el microservicio
-    // Mock data por ahora
-    setTimeout(() => {
-      setReservations(mockReservations);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    const loadReservations = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const reservationsData = await fetchReservations();
+        
+        // Filtrar reservaciones del usuario actual si está logueado
+        let userReservations = reservationsData;
+        if (user?.userId) {
+          userReservations = reservationsData.filter(r => r.userId === user.userId);
+        }
+        
+        setReservations(userReservations);
+      } catch (error) {
+        console.error('Error fetching reservations:', error);
+        setError(error instanceof Error ? error.message : 'Error al cargar las reservaciones');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadReservations();
+  }, [user]);
 
   const getFilteredAndSortedReservations = () => {
     let filtered = reservations;
@@ -32,7 +54,7 @@ const Reservations: React.FC = () => {
 
     // Filtrar por estado
     if (statusFilter !== "all") {
-      filtered = filtered.filter((r) => r.reservationStatus === statusFilter);
+      filtered = filtered.filter((r) => r.status === statusFilter);
     }
 
     // Ordenar
@@ -43,7 +65,7 @@ const Reservations: React.FC = () => {
         case "date":
           return new Date(a.date).getTime() - new Date(b.date).getTime();
         case "status":
-          return a.reservationStatus.localeCompare(b.reservationStatus);
+          return a.status.localeCompare(b.status);
         case "name":
           return a.roomName.localeCompare(b.roomName);
         default:
@@ -78,11 +100,26 @@ const Reservations: React.FC = () => {
   if (isLoading) {
     return (
       <div className="reservations-container">
-        <Sidebar userName="Juan Pérez" />
+        <Sidebar />
         <div className="reservations-main">
           <div className="loading-state">
             <div className="loading-spinner"></div>
             <p>Cargando tus reservas...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="reservations-container">
+        <Sidebar />
+        <div className="reservations-main">
+          <div className="error-state">
+            <h3>Error al cargar las reservaciones</h3>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Reintentar</button>
           </div>
         </div>
       </div>
@@ -94,12 +131,17 @@ const Reservations: React.FC = () => {
 
   return (
     <div className="reservations-container">
-      <Sidebar userName="Juan Pérez" />
+      <Sidebar />
 
       <main className="reservations-main">
         <header className="reservations-header">
           <h1>Mis Reservas</h1>
-          <button className="new-reservation-btn">Nueva Reserva +</button>
+          <button 
+            className="new-reservation-btn"
+            onClick={() => navigate('/make-reservation')}
+          >
+            Nueva Reserva +
+          </button>
         </header>
 
         <div className="reservations-filters">
@@ -172,7 +214,7 @@ const Reservations: React.FC = () => {
                     startTime={reservation.startTime}
                     endTime={reservation.endTime}
                     date={reservation.date}
-                    reservationStatus={reservation.reservationStatus}
+                    status={reservation.status}
                   />
                 ))}
               </div>

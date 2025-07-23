@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import logo from "../../assets/logos/logo.svg";
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    username: '',
+    email: '',
     password: '',
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Limpiar mensajes de error y éxito cuando el usuario empiece a escribir
+    if (error) setError('');
+    if (successMessage) setSuccessMessage('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,17 +43,58 @@ const Register: React.FC = () => {
       return;
     }
 
+    // Validación de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Por favor ingresa un email válido');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      setError('El nombre es requerido');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // TODO: Implementar lógica de registro con el microservicio de usuarios
-      console.log('Register attempt:', formData);
+      // Llamada al API para crear el usuario
+      const response = await fetch('https://qbpvpt3iza.execute-api.us-east-2.amazonaws.com/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      if (!response.ok) {
+        // Intentar obtener el mensaje de error del servidor
+        const errorData = await response.json().catch(() => null);
+        const errorMessage = errorData?.message || `Error del servidor: ${response.status}`;
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      console.log('Usuario registrado exitosamente:', data);
+
+      // Mostrar mensaje de éxito
+      setSuccessMessage('¡Cuenta creada exitosamente! Redirigiendo al login...');
       
-      // Simulación de delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Redirigir al login después de un breve delay
+      setTimeout(() => {
+        navigate('/login', { 
+          state: { message: 'Cuenta creada exitosamente. Puedes iniciar sesión ahora.' }
+        });
+      }, 2000);
       
-      // TODO: Manejar respuesta del servidor y redireccionar
-      
-    } catch {
-      setError('Error al crear la cuenta. Inténtalo de nuevo.');
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error al crear la cuenta. Inténtalo de nuevo.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -79,14 +126,14 @@ const Register: React.FC = () => {
           </div>
 
           <div className="register-form-group">
-            <label htmlFor="username">Nombre de Usuario</label>
+            <label htmlFor="email">Correo Electrónico</label>
             <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="juanperez123"
+              placeholder="ejemplo@correo.com"
               required
             />
           </div>
@@ -120,13 +167,14 @@ const Register: React.FC = () => {
           </div>
 
           {error && <div className="register-error-message">{error}</div>}
+          {successMessage && <div className="register-success-message">{successMessage}</div>}
 
           <button 
             type="submit" 
             className="register-button"
-            disabled={isLoading}
+            disabled={isLoading || !!successMessage}
           >
-            {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+            {isLoading ? 'Creando cuenta...' : successMessage ? 'Redirigiendo...' : 'Crear Cuenta'}
           </button>
         </form>
 

@@ -3,49 +3,99 @@ import "./ReservationInfo.css";
 import { Sidebar } from "../../components";
 import { useState, useEffect } from "react";
 import type { Room, Reservation } from "../../types";
-import { mockRooms, mockReservations } from "../../data";
 import { useParams } from "react-router-dom";
 import { getRoomImage } from "../../utils";
+import { fetchReservationById, fetchRooms } from "../../services";
+import { formatDisplayDate, formatDisplayTime } from "../../utils/dateUtils";
 
 const ReservationInfo: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [myReservation, setReservation] = useState<Reservation | null>(null);
-  const [myRoom, setRoom] = useState<Room | null>(null);
-  console.log("ids ", id);
+  const [myReservation, setMyReservation] = useState<Reservation | null>(null);
+  const [myRoom, setMyRoom] = useState<Room | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id) return;
-    const roomId = id;
+    const loadReservation = async () => {
+      if (!id) {
+        setError("ID de reservación no válido");
+        setLoading(false);
+        return;
+      }
 
-    setTimeout(() => {
-      const reservation = mockReservations.find((item) => item.id === roomId);
-      console.log("reservation ", reservation);
-      setReservation(reservation ?? null);
-    }, 1000);
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log('Fetching reservation details for ID:', id);
+        const reservation = await fetchReservationById(id);
+        console.log("reservation ", reservation);
+        setMyReservation(reservation);
+
+        if (!reservation) {
+          setError("Reservación no encontrada");
+        }
+      } catch (error) {
+        console.error('Error fetching reservation:', error);
+        setError(error instanceof Error ? error.message : 'Error al cargar la reservación');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadReservation();
   }, [id]);
 
   useEffect(() => {
-    if (myReservation) {
-      const foundRoom = mockRooms.find(
-        (item) => item.roomName === myReservation.roomName
-      );
-      console.log("room encontrada", foundRoom);
-      setRoom(foundRoom ?? null);
-    }
+    const loadRoom = async () => {
+      if (myReservation) {
+        try {
+          const rooms = await fetchRooms();
+          const foundRoom = rooms.find(
+            (item: Room) => item.roomName === myReservation.roomName
+          );
+          console.log("room encontrada", foundRoom);
+          setMyRoom(foundRoom ?? null);
+        } catch (error) {
+          console.error('Error fetching room:', error);
+        }
+      }
+    };
+
+    loadRoom();
   }, [myReservation]);
 
-  // console.log(mockRooms);
+  if (error) {
+    return (
+      <div className="reservation-info-container">
+        <Sidebar />
+        <main className="reservation-info-main">
+          <header className="reservation-info-header">
+            <h1 className="reservation-info-main-title">Error</h1>
+          </header>
+          <div className="reservation-info-error">
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Reintentar</button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="reservation-info-container">
-      <Sidebar userName="Juan Pérez" />
+      <Sidebar />
       <main className="reservation-info-main">
         <header className="reservation-info-header">
           <h1 className="reservation-info-main-title">
             Información de Reserva<span>#{myReservation?.id}</span>
           </h1>
         </header>
-        {myReservation && myRoom ? (
+        {loading || !myReservation || !myRoom ? (
+          <div className="reservation-info-loading">
+            <p>Cargando información de la reserva...</p>
+          </div>
+        ) : (
           <div className="reservation-info-content">
             <div
               className="reservation-info-picture"
@@ -86,15 +136,15 @@ const ReservationInfo: React.FC = () => {
                 <section>
                   <dl>
                     <dt>Fecha</dt>
-                    <dd>{myReservation.date}</dd>
+                    <dd>{formatDisplayDate(myReservation.date)}</dd>
                     <dt>Hora Inicio</dt>
-                    <dd>{myReservation.startTime}</dd>
+                    <dd>{formatDisplayTime(myReservation.startTime)}</dd>
                   </dl>
                   <dl>
                     <dt>Cantidad de Horas</dt>
                     <dd>{myReservation.duration}</dd>
                     <dt>Hora Finalización</dt>
-                    <dd>{myReservation.endTime}</dd>
+                    <dd>{formatDisplayTime(myReservation.endTime)}</dd>
                   </dl>
                 </section>
                 <div className="reservation-info-options">
@@ -107,10 +157,6 @@ const ReservationInfo: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="reservation-info-loading">
-            <p>Cargando información de la reserva...</p>
           </div>
         )}
       </main>

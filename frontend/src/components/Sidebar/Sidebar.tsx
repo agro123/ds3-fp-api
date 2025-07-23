@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../context/useAuth";
 import "./Sidebar.css";
 import logo from "../../assets/logos/logo.svg";
 
@@ -7,18 +8,15 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
-  userName = "Usuario"
+  userName 
 }) => {
+  const { user, logout } = useAuth();
+  
+  // Usar el nombre del usuario del contexto si no se proporciona userName
+  const displayName = userName || user?.nombre || "Usuario";
+
   const handleSignOut = () => {
-    // TODO: Implementar lógica de cierre de sesión completa
-    // - Limpiar localStorage/sessionStorage
-    // - Hacer logout en el backend
-    // - Redirigir a login
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    console.log("Cerrando sesión...");
-    // Redirigir a login
-    window.location.href = '/login';
+    logout(); // El contexto maneja la limpieza y redirección
   };
 
   return (
@@ -29,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="sidebar-logo">
             <img src={logo} alt="UniSalas Logo" />
           </div>
-          <span>{userName}</span>
+          <span>{displayName}</span>
         </div>
         <div className="sidebar-links">
           <a href="/home" className="sidebar-link">

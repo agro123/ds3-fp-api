@@ -2,12 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Home.css";
 import { ReservationCard, Sidebar } from "../../components";
 import type { Reservation } from "../../types";
-import { mockReservations } from "../../data";
+import { fetchReservations } from "../../services";
+import { useAuth } from "../../context/useAuth";
 
 const Home: React.FC = () => {
   const [upcomingReservations, setUpcomingReservations] = useState<
     Reservation[]
   >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   // Drag scroll functionality for reservations list
   const reservationsListRef = useRef<HTMLDivElement>(null);
@@ -16,10 +20,31 @@ const Home: React.FC = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
 
   useEffect(() => {
-    // TODO: Cargar datos desde los microservicios
-    // Mock data por ahora - obtener solo las primeras 4 reservas
-    setUpcomingReservations(mockReservations.slice(0, 4));
-  }, []);
+    const loadReservations = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const reservationsData = await fetchReservations();
+        
+        // Filtrar reservaciones del usuario actual si está logueado
+        let userReservations = reservationsData;
+        if (user?.userId) {
+          userReservations = reservationsData.filter(r => r.userId === user.userId);
+        }
+        
+        // Mostrar solo las primeras 4 reservas próximas
+        setUpcomingReservations(userReservations.slice(0, 4));
+      } catch (error) {
+        console.error('Error fetching reservations:', error);
+        setError(error instanceof Error ? error.message : 'Error al cargar las reservaciones');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadReservations();
+  }, [user]);
 
   // Drag scroll event handlers for reservations list
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -54,9 +79,22 @@ const Home: React.FC = () => {
     reservationsListRef.current.scrollLeft = scrollLeft - walk;
   };
 
+  if (isLoading) {
+    return (
+      <div className="home-container">
+        <Sidebar />
+        <main className="home-main">
+          <div className="loading-state">
+            <p>Cargando reservaciones...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="home-container">
-      <Sidebar userName="Juan Pérez" />
+      <Sidebar />
 
       <main className="home-main">
         <section className="home-reservations">
@@ -74,25 +112,31 @@ const Home: React.FC = () => {
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
           >
-            {upcomingReservations.map((reservation) => (
-              <ReservationCard
-                key={reservation.id}
-                id={reservation.id}
-                roomName={reservation.roomName}
-                roomType={reservation.roomType}
-                startTime={reservation.startTime}
-                endTime={reservation.endTime}
-                date={reservation.date}
-                reservationStatus={reservation.reservationStatus}
-              />
-            ))}
+            {error ? (
+              <div className="error-message">
+                <p>Error al cargar las reservaciones: {error}</p>
+                <button onClick={() => window.location.reload()}>Reintentar</button>
+              </div>
+            ) : upcomingReservations.length === 0 ? (
+              <div className="empty-reservations">
+                <p>No tienes reservaciones próximas</p>
+                <a href="/make-reservation" className="cta-button">Crear nueva reserva</a>
+              </div>
+            ) : (
+              upcomingReservations.map((reservation) => (
+                <ReservationCard
+                  key={reservation.id}
+                  id={reservation.id}
+                  roomName={reservation.roomName}
+                    roomType={reservation.roomType}
+                  startTime={reservation.startTime}
+                  endTime={reservation.endTime}
+                  date={reservation.date}
+                  status={reservation.status}
+                />
+              ))
+            )}
           </div>
-          {upcomingReservations.length === 0 && (
-            <div className="no-reservations">
-              <p>No tienes reservas próximas</p>
-              <button className="cta-button">Hacer una reserva</button>
-            </div>
-          )}
         </section>
         <section className="home-type-rooms">
           <div className="home-section-header">

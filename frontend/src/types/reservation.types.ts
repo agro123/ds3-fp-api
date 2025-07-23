@@ -6,9 +6,9 @@ export interface Reservation {
   startTime: string;
   endTime: string;
   duration: string;
-  reservationStatus: "confirmed" | "pending" | "cancelled";
+  status: "confirmed" | "pending" | "cancelled";
   createdAt: string;
-  userName: string;
+  userId: string;
 }
 
 export interface Room {
