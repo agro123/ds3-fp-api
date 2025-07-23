@@ -2,14 +2,14 @@ import React from "react";
 import { Sidebar } from "../../components";
 import "./Room.css";
 import { useState, useEffect } from "react";
-import type { Room } from "../../types";
+import type { Room as RoomType } from "../../types";
 import { mockRooms } from "../../data";
 import { useParams } from "react-router-dom";
 import { getRoomImage } from "../../utils";
 
 const Room: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [myRoom, setRoom] = useState<Room | null>(null);
+  const [myRoom, setRoom] = useState<RoomType | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -53,7 +53,7 @@ const Room: React.FC = () => {
                 <section>
                   <span className="room_title_span">Equipamiento</span>
                   <ul>
-                    {myRoom.equipment.map((e, index) => (
+                    {myRoom.equipment.map((e: string, index: number) => (
                       <li key={index}>{e}</li>
                     ))}
                   </ul>

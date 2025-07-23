@@ -1,12 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth, useLoginGuard } from "../../context/useAuth";
 import "./Login.css";
 import logo from "../../assets/logos/logo.svg";
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
+  useLoginGuard(); // Redirige a /home si ya está autenticado
+  
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Efecto adicional para garantizar redirección después del login
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('Login - Usuario autenticado, redirigiendo a /home');
+      navigate('/home');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,15 +28,22 @@ const Login: React.FC = () => {
     setError("");
 
     try {
-      // TODO: Implementar lógica de login con el microservicio de auth
-      console.log("Login attempt:", { username, password });
+      const success = await login(email, password);
 
-      // Simulación de delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // TODO: Manejar respuesta del servidor y redireccionar
-    } catch {
-      setError("Error al iniciar sesión. Verifica tus credenciales.");
+      if (success) {
+        console.log("Login successful");
+        // El contexto y useLoginGuard manejarán automáticamente la redirección
+        // No necesitamos navigate("/home") aquí
+      } else {
+        throw new Error("Credenciales inválidas. Verifica tu email y contraseña.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Error al iniciar sesión. Verifica tu conexión a internet.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -41,13 +62,13 @@ const Login: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="login-form-group">
-            <label htmlFor="username">Nombre de usuario</label>
+            <label htmlFor="email">Correo electrónico</label>
             <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ingresa tu nombre de usuario"
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Ingresa tu correo electrónico"
               required
             />
           </div>
