@@ -132,11 +132,11 @@ npm install
 Archivo `.env`:
 
 ```env
-BD_HOST="ds3-fp.cn6ksmmmcljy.us-east-2.rds.amazonaws.com"
+BD_HOST=<tu_host>
 BD_PORT=5432
-BD_DATABASE="ds3_DB"
-BD_PASSWORD="ds3pr0j3ct"
-BD_USER="admin_ds3"
+BD_DATABASE=<db>
+BD_PASSWORD=<password>
+BD_USER=<user>
 ```
 
 Iniciar:
