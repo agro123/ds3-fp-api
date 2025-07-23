@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, useLoginGuard } from "../../context/useAuth";
 import "./Login.css";
 import logo from "../../assets/logos/logo.svg";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isAuthenticated } = useAuth();
   useLoginGuard(); // Redirige a /home si ya está autenticado
   
@@ -13,6 +14,18 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // Efecto para mostrar mensaje de registro exitoso
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // Limpiar el state después de mostrar el mensaje
+      navigate(location.pathname, { replace: true });
+      // Limpiar el mensaje después de 5 segundos
+      setTimeout(() => setSuccessMessage(""), 5000);
+    }
+  }, [location, navigate]);
 
   // Efecto adicional para garantizar redirección después del login
   useEffect(() => {
@@ -85,6 +98,7 @@ const Login: React.FC = () => {
             />
           </div>
 
+          {successMessage && <div className="login-success-message">{successMessage}</div>}
           {error && <div className="login-error-message">{error}</div>}
 
           <button type="submit" className="login-button" disabled={isLoading}>

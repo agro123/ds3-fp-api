@@ -47,7 +47,7 @@ function App() {
                   <Reservations />
                 </ProtectedRoute>
               } />
-              <Route path="/reservations/new" element={
+              <Route path="/make-reservation" element={
                 <ProtectedRoute>
                   <NewReservation />
                 </ProtectedRoute>

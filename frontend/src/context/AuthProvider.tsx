@@ -75,11 +75,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Si no tenemos datos de usuario específicos, crear un objeto básico
       if (!userData || typeof userData !== 'object') {
         userData = {
-          id: data.id || data.userId || 'unknown',
+          userId: data.userId || data.id || 'unknown',
           email: data.email || 'unknown@example.com',
           nombre: data.nombre || data.name || data.firstName || 'Usuario',
           apellido: data.apellido || data.lastname || data.lastName || '',
           plan: data.plan || data.role || 'estudiante'
+        };
+      } else {
+        // Normalize userData to ensure it has userId instead of id
+        userData = {
+          userId: userData.userId || userData.id || data.userId || data.id || 'unknown',
+          email: userData.email || data.email || 'unknown@example.com',
+          nombre: userData.nombre || userData.name || data.nombre || data.name || 'Usuario',
+          apellido: userData.apellido || userData.lastname || data.apellido || data.lastName || '',
+          plan: userData.plan || userData.role || data.plan || data.role || 'estudiante'
         };
       }
       

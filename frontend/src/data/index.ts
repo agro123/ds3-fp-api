@@ -1,2 +1,1 @@
-export * from './mockReservations';
-export * from './mockRooms';
+// Los datos mock han sido removidos - ahora se usan APIs reales

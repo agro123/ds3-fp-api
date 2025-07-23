@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 // Tipos para el contexto de autenticación
 export interface User {
-  id: string;
+  userId: string;
   email: string;
   nombre: string;
   apellido: string;

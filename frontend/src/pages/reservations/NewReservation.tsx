@@ -1,27 +1,170 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./NewReservation.css";
 import { Sidebar } from "../../components";
-import { mockRooms } from "../../data";
 import { getRoomImage } from "../../utils";
 import type { Room } from "../../types";
+import { fetchRooms } from "../../services/roomService";
+import { createReservation, type CreateReservationData } from "../../services/reservationService";
+import { useAuth } from "../../context/useAuth";
 
 const NewReservation: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    date: "",
+    startTime: "",
+    endTime: "",
+    selectedTimeSlot: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
-    if (mockRooms.length > 0) {
-      setSelectedRoom(mockRooms[0]);
-    }
+    const loadRooms = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const roomsData = await fetchRooms();
+        setRooms(roomsData);
+        if (roomsData.length > 0) {
+          setSelectedRoom(roomsData[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+        setError(error instanceof Error ? error.message : 'Error al cargar las salas');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRooms();
   }, []);
 
   const handleRoomChange = (roomId: string) => {
-    const room = mockRooms.find((r) => r.id === roomId);
+    const room = rooms.find((r) => r.id === roomId);
     setSelectedRoom(room || null);
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    setSubmitError(null);
+  };
+
+  const handleTimeSlotChange = (timeSlot: string) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedTimeSlot: timeSlot
+    }));
+    
+    // Auto-fill start and end times based on time slot
+    const timeMapping: { [key: string]: { start: string; end: string } } = {
+      "8-10": { start: "08:00", end: "10:00" },
+      "10-12": { start: "10:00", end: "12:00" },
+      "2-4": { start: "14:00", end: "16:00" },
+      "4-6": { start: "16:00", end: "18:00" },
+      "6-8": { start: "18:00", end: "20:00" },
+      "8-10pm": { start: "20:00", end: "22:00" }
+    };
+
+    if (timeMapping[timeSlot]) {
+      setFormData(prev => ({
+        ...prev,
+        startTime: timeMapping[timeSlot].start,
+        endTime: timeMapping[timeSlot].end
+      }));
+    }
+    setSubmitError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.userId) {
+      setSubmitError("Error: Usuario no autenticado");
+      return;
+    }
+
+    if (!selectedRoom) {
+      setSubmitError("Por favor selecciona una sala");
+      return;
+    }
+
+    if (!formData.date || !formData.startTime || !formData.endTime) {
+      setSubmitError("Por favor completa todos los campos requeridos");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+
+      const reservationData: CreateReservationData = {
+        user_id: user.userId,
+        room_id: selectedRoom.id,
+        roomName: selectedRoom.roomName,
+        date: formData.date,
+        startTime: formData.startTime,
+        endTime: formData.endTime
+      };
+
+      await createReservation(reservationData);
+      setSubmitSuccess(true);
+      
+      // Redirect to reservations page after 2 seconds
+      setTimeout(() => {
+        navigate('/reservations');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Error al crear la reserva');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="new-reservation-container">
+        <Sidebar />
+        <main className="new-reservation-main">
+          <div className="loading-state">
+            <p>Cargando salas disponibles...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="new-reservation-container">
+        <Sidebar />
+        <main className="new-reservation-main">
+          <div className="error-state">
+            <h3>Error al cargar las salas</h3>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Reintentar</button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="new-reservation-container">
-      <Sidebar userName="Juan Pérez" />
+      <Sidebar />
       <main className="new-reservation-main">
         <header className="new-reservation-header">
           <h1>Nueva Reserva</h1>
@@ -84,9 +227,9 @@ const NewReservation: React.FC = () => {
                         <option value="">Selecciona una sala...</option>
 
                         <optgroup label="🎭 Auditorios">
-                          {mockRooms
-                            .filter((room) => room.roomType === "Auditorios")
-                            .map((room) => (
+                          {rooms
+                            .filter((room: Room) => room.roomType === "Auditorios")
+                            .map((room: Room) => (
                               <option key={room.id} value={room.id}>
                                 {room.roomName}
                               </option>
@@ -94,9 +237,9 @@ const NewReservation: React.FC = () => {
                         </optgroup>
 
                         <optgroup label="🏫 Salones">
-                          {mockRooms
-                            .filter((room) => room.roomType === "Salon")
-                            .map((room) => (
+                          {rooms
+                            .filter((room: Room) => room.roomType === "Salon")
+                            .map((room: Room) => (
                               <option key={room.id} value={room.id}>
                                 {room.roomName}
                               </option>
@@ -104,9 +247,9 @@ const NewReservation: React.FC = () => {
                         </optgroup>
 
                         <optgroup label="🔬 Laboratorios">
-                          {mockRooms
-                            .filter((room) => room.roomType === "Laboratorio")
-                            .map((room) => (
+                          {rooms
+                            .filter((room: Room) => room.roomType === "Laboratorio")
+                            .map((room: Room) => (
                               <option key={room.id} value={room.id}>
                                 {room.roomName}
                               </option>
@@ -114,11 +257,11 @@ const NewReservation: React.FC = () => {
                         </optgroup>
 
                         <optgroup label="💻 Salas de Cómputo">
-                          {mockRooms
+                          {rooms
                             .filter(
-                              (room) => room.roomType === "Sala de cómputo"
+                              (room: Room) => room.roomType === "Sala de cómputo"
                             )
-                            .map((room) => (
+                            .map((room: Room) => (
                               <option key={room.id} value={room.id}>
                                 {room.roomName}
                               </option>
@@ -142,25 +285,46 @@ const NewReservation: React.FC = () => {
                 </section>
               </div>
             </div>
-            <form action="" className="new-reservation-form-create">
+            <form onSubmit={handleSubmit} className="new-reservation-form-create">
+              {submitError && (
+                <div style={{ padding: "10px", backgroundColor: "#fee", color: "#c00", borderRadius: "4px", marginBottom: "20px" }}>
+                  {submitError}
+                </div>
+              )}
+              {submitSuccess && (
+                <div style={{ padding: "10px", backgroundColor: "#efe", color: "#080", borderRadius: "4px", marginBottom: "20px" }}>
+                  ¡Reserva creada exitosamente! Redirigiendo...
+                </div>
+              )}
               <div className="new-reservation-create">
                 <h3>Información Reserva</h3>
                 <div className="new-reservation-form-dates">
                   <section>
                     <p>Fecha</p>
-                    <input type="date" />
-                  </section>
-                  <section>
-                    <p>Cantidad de Horas</p>
-                    <input type="text" />
+                    <input 
+                      type="date" 
+                      value={formData.date}
+                      onChange={(e) => handleInputChange('date', e.target.value)}
+                      required
+                    />
                   </section>
                   <section>
                     <p>Hora Inicio</p>
-                    <input type="time" />
+                    <input 
+                      type="time" 
+                      value={formData.startTime}
+                      onChange={(e) => handleInputChange('startTime', e.target.value)}
+                      required
+                    />
                   </section>
                   <section>
                     <p>Hora Finalización</p>
-                    <input type="time" />
+                    <input 
+                      type="time" 
+                      value={formData.endTime}
+                      onChange={(e) => handleInputChange('endTime', e.target.value)}
+                      required
+                    />
                   </section>
                 </div>
               </div>
@@ -170,41 +334,79 @@ const NewReservation: React.FC = () => {
                 </span>
                 <div className="new-reservation-hours">
                   <label className="time-slot">
-                    <input type="radio" value="8-10" name="lapse" />
+                    <input 
+                      type="radio" 
+                      value="8-10" 
+                      name="lapse" 
+                      checked={formData.selectedTimeSlot === "8-10"}
+                      onChange={(e) => handleTimeSlotChange(e.target.value)}
+                    />
                     <span>8:00 AM - 10:00 AM</span>
                   </label>
 
                   <label className="time-slot">
-                    <input type="radio" value="10-12" name="lapse" />
+                    <input 
+                      type="radio" 
+                      value="10-12" 
+                      name="lapse" 
+                      checked={formData.selectedTimeSlot === "10-12"}
+                      onChange={(e) => handleTimeSlotChange(e.target.value)}
+                    />
                     <span>10:00 AM - 12:00 PM</span>
                   </label>
 
                   <label className="time-slot">
-                    <input type="radio" value="2-4" name="lapse" />
+                    <input 
+                      type="radio" 
+                      value="2-4" 
+                      name="lapse" 
+                      checked={formData.selectedTimeSlot === "2-4"}
+                      onChange={(e) => handleTimeSlotChange(e.target.value)}
+                    />
                     <span>2:00 PM - 4:00 PM</span>
                   </label>
 
                   <label className="time-slot">
-                    <input type="radio" value="4-6" name="lapse" />
+                    <input 
+                      type="radio" 
+                      value="4-6" 
+                      name="lapse" 
+                      checked={formData.selectedTimeSlot === "4-6"}
+                      onChange={(e) => handleTimeSlotChange(e.target.value)}
+                    />
                     <span>4:00 PM - 6:00 PM</span>
                   </label>
 
                   <label className="time-slot">
-                    <input type="radio" value="6-8" name="lapse" />
+                    <input 
+                      type="radio" 
+                      value="6-8" 
+                      name="lapse" 
+                      checked={formData.selectedTimeSlot === "6-8"}
+                      onChange={(e) => handleTimeSlotChange(e.target.value)}
+                    />
                     <span>6:00 PM - 8:00 PM</span>
                   </label>
 
                   <label className="time-slot">
-                    <input type="radio" value="8-10" name="lapse" />
-                    <span>8:00 AM - 10:00 PM</span>
+                    <input 
+                      type="radio" 
+                      value="8-10pm" 
+                      name="lapse" 
+                      checked={formData.selectedTimeSlot === "8-10pm"}
+                      onChange={(e) => handleTimeSlotChange(e.target.value)}
+                    />
+                    <span>8:00 PM - 10:00 PM</span>
                   </label>
                 </div>
               </div>
-              <input
+              <button
                 type="submit"
                 className="new-reservation-btn"
-                value="Realizar reserva"
-              />
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Creando reserva..." : "Realizar reserva"}
+              </button>
             </form>
           </div>
         </div>

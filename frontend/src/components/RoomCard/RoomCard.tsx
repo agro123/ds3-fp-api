@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./RoomCard.css";
 import { getRoomImage, getRoomTypeText } from "../../utils";
 
@@ -10,20 +11,28 @@ interface RoomCardProps {
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
+  id,
   roomName,
   roomType,
   capacity,
 }) => {
+  const navigate = useNavigate();
   const backgroundImage = getRoomImage(roomName, roomType);
+
+  const handleCardClick = () => {
+    navigate(`/rooms/${id}`);
+  };
 
   return (
     <div
       className="room-card"
+      onClick={handleCardClick}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
+        cursor: "pointer",
       }}
     >
       <div className="room-card-overlay">

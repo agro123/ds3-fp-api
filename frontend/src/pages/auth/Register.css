@@ -95,6 +95,16 @@
   font-size: 14px;
 }
 
+.register-success-message {
+  background-color: #d1fae5;
+  color: #059669;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #a7f3d0;
+  font-size: 14px;
+  text-align: center;
+}
+
 .register-button {
   background: #087eee;
   color: white;

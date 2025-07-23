@@ -1,25 +1,37 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Rooms.css";
 import { RoomCard, Sidebar } from "../../components";
 import type { Room, RoomTypeFilter, CapacityFilter, RoomSortBy } from "../../types";
-import { mockRooms } from "../../data";
+import { fetchRooms } from "../../services/roomService";
 
 const Rooms: React.FC = () => {
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomTypeFilter, setRoomTypeFilter] = useState<RoomTypeFilter>("all");
   const [capacityFilter, setCapacityFilter] = useState<CapacityFilter>("all");
   const [sortBy, setSortBy] = useState<RoomSortBy>("name");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   useEffect(() => {
-    // TODO: Cargar salas desde el microservicio
-    // Mock data por ahora
-    setTimeout(() => {
-      setRooms(mockRooms);
-      setIsLoading(false);
-    }, 1000);
+    const loadRooms = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const roomsData = await fetchRooms();
+        setRooms(roomsData);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Error al cargar las salas');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRooms();
   }, []);
 
   const getFilteredAndSortedRooms = () => {
@@ -91,11 +103,32 @@ const Rooms: React.FC = () => {
   if (isLoading) {
     return (
       <div className="rooms-container">
-        <Sidebar userName="Juan Pérez" />
+        <Sidebar />
         <div className="rooms-main">
           <div className="loading-state">
             <div className="loading-spinner"></div>
             <p>Cargando salas disponibles...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rooms-container">
+        <Sidebar />
+        <div className="rooms-main">
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <h3>Error al cargar las salas</h3>
+            <p>{error}</p>
+            <button 
+              className="retry-button"
+              onClick={() => window.location.reload()}
+            >
+              Reintentar
+            </button>
           </div>
         </div>
       </div>
@@ -107,12 +140,17 @@ const Rooms: React.FC = () => {
 
   return (
     <div className="rooms-container">
-      <Sidebar userName="Juan Pérez" />
+      <Sidebar />
 
       <main className="rooms-main">
         <header className="rooms-header">
           <h1>Salas Disponibles</h1>
-          <button className="new-reservation-btn">Reservar Sala +</button>
+          <button 
+            className="new-reservation-btn"
+            onClick={() => navigate('/make-reservation')}
+          >
+            Reservar Sala +
+          </button>
         </header>
 
         <div className="rooms-filters">

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./ReservationCard.css";
 import { getRoomImage } from "../../utils";
+import { formatDisplayDate, formatDisplayTime } from "../../utils/dateUtils";
 
 interface ReservationCardProps {
   id: string;
@@ -9,18 +11,24 @@ interface ReservationCardProps {
   startTime: string;
   endTime: string;
   date: string;
-  reservationStatus: "confirmed" | "pending" | "cancelled";
+  status: "confirmed" | "pending" | "cancelled";
 }
 
 const ReservationCard: React.FC<ReservationCardProps> = ({
+  id,
   roomName,
   roomType,
   startTime,
   endTime,
   date,
-  reservationStatus,
+  status,
 }) => {
+  const navigate = useNavigate();
   const backgroundImage = getRoomImage(roomName, roomType);
+
+  const handleCardClick = () => {
+    navigate(`/reservations/${id}`);
+  };
 
   // Función para obtener el texto del estado
   const getStatusText = (status: string): string => {
@@ -53,27 +61,29 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
   return (
     <div
       className="reservation-card"
+      onClick={handleCardClick}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
+        cursor: "pointer",
       }}
     >
       <div 
         className="reservation-card-status"
         style={{
-          backgroundColor: getStatusColor(reservationStatus),
+          backgroundColor: getStatusColor(status),
         }}
       >
-        {getStatusText(reservationStatus)}
+        {getStatusText(status)}
       </div>
       <div className="reservation-card-overlay">
         <div className="reservation-card-content">
           <h3>{roomName}</h3>
           <div className="reservation-card-details">
-            <p>📅 {date}</p>
-            <p>⏰ {startTime} - {endTime}</p>
+            <p>📅 {formatDisplayDate(date)}</p>
+            <p>⏰ {formatDisplayTime(startTime)} - {formatDisplayTime(endTime)}</p>
           </div>
         </div>
       </div>
