@@ -1,0 +1,108 @@
+.room-container {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.room-main {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100vh;
+  overflow: hidden;
+  max-height: 100vh;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.room-header h1 {
+  margin: 0;
+  color: #374151;
+  font-size: 1.8rem;
+}
+
+.room-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  gap: 16px;
+}
+
+.room-picture {
+  width: 40%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.room-details {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  box-shadow: none;
+  height: fit-content;
+  gap: 20px;
+}
+
+.room-details h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.room-information {
+  display: flex;
+  width: 100%;
+  font-size: 1.2rem;
+  text-align: justify;
+}
+
+.room-information dt {
+  font-size: 1rem;
+}
+
+.room-information dd {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.room-information dd:first-of-type {
+  margin-bottom: 10px;
+}
+
+.room-information section {
+  margin: 0 auto;
+}
+
+.room-information ul {
+  margin-left: 22px;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.room_title_span {
+  font-size: 1rem;
+}
+
+.room-card button {
+  width: 90%;
+}

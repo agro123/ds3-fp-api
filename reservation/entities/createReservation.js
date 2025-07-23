@@ -1,7 +1,7 @@
 import pool from "../utils/db.js";
 
 export const createReservation = async (req, res) => {
-  const { user_id, room_id, date: date_reserve, startTime, endTime, status } = req.body;
+  const { user_id, room_id, date: date_reserve, startTime, endTime, status, roomName } = req.body;
 
   if (!user_id || !room_id || !date_reserve || !startTime || !endTime || !status) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios' });
@@ -28,9 +28,9 @@ export const createReservation = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO reservations (user_id, room_id, date_reserve, start_time, end_time, status)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [user_id, room_id, date_reserve, startTime, endTime, status]
+      `INSERT INTO reservations (user_id, room_id, date_reserve, start_time, end_time, status, room_name)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [user_id, room_id, date_reserve, startTime, endTime, status, roomName]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
