@@ -1,1 +1,1 @@
-con este valor: { "rewrites": [ { "source": "/(.*)", "destination": "/" } ] }
+{ "rewrites": [ { "source": "/(.*)", "destination": "/" } ] }
