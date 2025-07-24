@@ -28,8 +28,8 @@ const Reservations: React.FC = () => {
         
         // Filtrar reservaciones del usuario actual si está logueado
         let userReservations = reservationsData;
-        if (user?.userId) {
-          userReservations = reservationsData.filter(r => r.userId === user.userId);
+        if (user?.id) {
+          userReservations = reservationsData.filter(r => r.userId === user.id);
         }
         
         setReservations(userReservations);

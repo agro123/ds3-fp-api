@@ -4,6 +4,7 @@ import { ReservationCard, Sidebar } from "../../components";
 import type { Reservation } from "../../types";
 import { fetchReservations } from "../../services";
 import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
   const [upcomingReservations, setUpcomingReservations] = useState<
@@ -12,12 +13,22 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Drag scroll functionality for reservations list
   const reservationsListRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Función para navegar a /rooms con filtro específico
+  const navigateToRoomsWithFilter = (roomType: string) => {
+    navigate('/rooms', { 
+      state: { 
+        filterType: roomType 
+      } 
+    });
+  };
 
   useEffect(() => {
     const loadReservations = async () => {
@@ -29,8 +40,8 @@ const Home: React.FC = () => {
         
         // Filtrar reservaciones del usuario actual si está logueado
         let userReservations = reservationsData;
-        if (user?.userId) {
-          userReservations = reservationsData.filter(r => r.userId === user.userId);
+        if (user?.id) {
+          userReservations = reservationsData.filter(r => r.userId === user.id);
         }
         
         // Mostrar solo las primeras 4 reservas próximas
@@ -146,22 +157,38 @@ const Home: React.FC = () => {
             </a>
           </div>
           <div className="home-type-rooms-list">
-            <div className="category-room-card">
+            <div 
+              className="category-room-card"
+              onClick={() => navigateToRoomsWithFilter('Auditorios')}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="category-room-card-content">
                 <h1>Auditorios</h1>
               </div>
             </div>
-            <div className="category-room-card">
+            <div 
+              className="category-room-card"
+              onClick={() => navigateToRoomsWithFilter('Salon')}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="category-room-card-content">
                 <h1>Salones</h1>
               </div>
             </div>
-            <div className="category-room-card">
+            <div 
+              className="category-room-card"
+              onClick={() => navigateToRoomsWithFilter('Laboratorio')}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="category-room-card-content">
                 <h1>Laboratorios</h1>
               </div>
             </div>
-            <div className="category-room-card">
+            <div 
+              className="category-room-card"
+              onClick={() => navigateToRoomsWithFilter('Sala de cómputo')}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="category-room-card-content">
                 <h1>Salas de Cómputo</h1>
               </div>

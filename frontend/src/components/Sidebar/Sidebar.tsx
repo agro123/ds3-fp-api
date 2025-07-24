@@ -11,9 +11,38 @@ const Sidebar: React.FC<SidebarProps> = ({
   userName 
 }) => {
   const { user, logout } = useAuth();
-  
-  // Usar el nombre del usuario del contexto si no se proporciona userName
-  const displayName = userName || user?.nombre || "Usuario";
+
+  // Crear el nombre completo del usuario
+  const getDisplayName = () => {
+    if (userName) return userName;
+    
+    if (user) {
+      // Usar el nombre del usuario si está disponible
+      if (user.name && user.name !== 'Usuario') {
+        return user.name;
+      }
+      
+      // Fallback a la estructura anterior (nombre + apellido) si existe
+      if (user.nombre) {
+        const firstName = user.nombre || "";
+        const lastName = user.apellido || "";
+        
+        if (firstName && lastName) {
+          return `${firstName} ${lastName}`;
+        }
+        return firstName;
+      }
+      
+      // Si solo tenemos email, usar la parte local como última opción
+      if (user.email) {
+        return user.email.split('@')[0];
+      }
+    }
+    
+    return "Usuario";
+  };
+
+  const displayName = getDisplayName();
 
   const handleSignOut = () => {
     logout(); // El contexto maneja la limpieza y redirección
